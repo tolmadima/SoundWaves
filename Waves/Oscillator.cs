@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using static Waves.WaveGenerator;
 
 namespace Waves
 {
     public class Oscillator : GroupBox
     {
-        public Oscillator() 
+        public Oscillator()
         {
             this.Controls.Add(new Button()
             {
@@ -37,14 +38,25 @@ namespace Waves
                 Location = new Point(120, 15),
                 Text = "Saw"
             });
-            foreach(Control control in this.Controls)
+            foreach (Control control in this.Controls)
             {
                 control.Size = new Size(50, 30);
                 control.Font = new Font("Microsoft Sans Serif", 6.75f);
                 control.Click += WaveButton_Click;
             }
+            this.Controls.Add(new CheckBox()
+            {
+                Name = "OscillatorOn",
+                Location = new Point(210, 10),
+                Size = new Size(40, 30),
+                Text = "On",
+                Checked = true
+            });
         }
+
+
         public WaveForm WaveForm { get; private set; }
+        public bool On => ((CheckBox)this.Controls["OscillatorOn"]).Checked;
         private void WaveButton_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;

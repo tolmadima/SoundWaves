@@ -49,6 +49,9 @@
     <Compile Include="Oscillator.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Swipe.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WaveGenerator.cs">
       <SubType>Form</SubType>
     </Compile>

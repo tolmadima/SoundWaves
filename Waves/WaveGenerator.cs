@@ -10,63 +10,45 @@ using System.Windows.Forms;
 using System.IO;
 using System.Media;
 
+
 namespace Waves
 {
     public partial class WaveGenerator : Form
     {
         private const int SAMPLE_RATE = 44100;
         private const short BITS_PER_SAMPLE = 16;
+        private double frequency;
+        private bool breakPoint = false;
         public WaveGenerator()
         {
             InitializeComponent();
         }
 
-        private void WaveGenerator_KeyDown(object sender, KeyEventArgs e)
+        private void buttonPlay_Click(object sender, EventArgs e)
         {
+            IEnumerable<Oscillator> oscillators = this.Controls.OfType<Oscillator>().Where(o => o.On);
             short[] wave = new short[SAMPLE_RATE];
             byte[] binaryWave = new byte[SAMPLE_RATE * sizeof(short)];
-            float frequency;
-            switch (e.KeyCode)
-            {
-                case Keys.Z:
-                    frequency = 65.4f;
-                    break;
-                case Keys.X:
-                    frequency = 138.59f;
-                    break;
-                case Keys.C:
-                    frequency = 261.62f;
-                    break;
-                case Keys.V:
-                    frequency = 523.25f;
-                    break;
-                case Keys.B:
-                    frequency = 2093f;
-                    break;
-                case Keys.N:
-                    frequency = 4186.01f;
-                    break;
-                default:
-                    return;
-            }
-            foreach (Oscillator oscillator in this.Controls.OfType<Oscillator>())
+            int oscillatorsCount = oscillators.Count();
+            foreach (Oscillator oscillator in oscillators)
             {
                 int samplesPerWaveLength = (int)(SAMPLE_RATE / frequency);
                 short ampStep = (short)((short.MaxValue * 2) / samplesPerWaveLength);
                 short tempSample;
+                frequency = (double)numericUpDown1.Value;
                 switch (oscillator.WaveForm)
                 {
                     case WaveForm.Sine:
                         for (int i = 0; i < SAMPLE_RATE; i++)
                         {
-                            wave[i] = Convert.ToInt16(short.MaxValue * Math.Sin(((Math.PI * 2 * frequency) / SAMPLE_RATE) * i));
+                            wave[i] += Convert.ToInt16((short.MaxValue * Math.Sin(((Math.PI * 2 * frequency) / SAMPLE_RATE) * i)) / oscillatorsCount);
                         }
                         break;
 
                     case WaveForm.Square:
                         for (int i = 0; i < SAMPLE_RATE; i++)
                         {
-                            wave[i] = Convert.ToInt16(short.MaxValue * Math.Sign(Math.Sin((Math.PI * 2 * frequency) / SAMPLE_RATE * i)));
+                            wave[i] += Convert.ToInt16((short.MaxValue * Math.Sign(Math.Sin((Math.PI * 2 * frequency) / SAMPLE_RATE * i))) / oscillatorsCount);
                         }
                         break;
 
@@ -77,7 +59,7 @@ namespace Waves
                             for (int j = 0; j < samplesPerWaveLength && i < SAMPLE_RATE; j++)
                             {
                                 tempSample += ampStep;
-                                wave[i++] = Convert.ToInt16(tempSample);
+                                wave[i++] += Convert.ToInt16(tempSample / oscillatorsCount);
                             }
                             i--;
                         }
@@ -91,12 +73,17 @@ namespace Waves
                                 ampStep = (short)-ampStep;
                             }
                             tempSample += ampStep;
-                            wave[i] = Convert.ToInt16(tempSample);
+                            wave[i] += Convert.ToInt16(tempSample / oscillatorsCount);
                         }
                         break;
                 }
             }
-
+                breakPoint = false;
+                PlaySound(wave, binaryWave);
+                System.Threading.Thread.Sleep(950);
+        }
+        public void PlaySound(short[] wave, byte[] binaryWave)
+        {
             Buffer.BlockCopy(wave, 0, binaryWave, 0, wave.Length * sizeof(short));
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -123,12 +110,78 @@ namespace Waves
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        public enum WaveForm
         {
+            Sine, Square, Saw, Triangle
         }
-    }
-    public enum WaveForm
-    {
-        Sine, Square, Saw, Triangle
+
+        private void buttonStop_Click(object sender, EventArgs e)
+        {
+            breakPoint = true;
+        }
+
+        private void StartSwipe_Click(object sender, EventArgs e)
+        {
+            int start = (int)startFreq.Value;
+            int end = (int)endFreq.Value;
+            int step = (int)stepFreq.Value;
+            for (int q = start; q == end; q += step)
+            {
+                IEnumerable<Oscillator> oscillators = this.Controls.OfType<Oscillator>().Where(o => o.On);
+                short[] wave = new short[SAMPLE_RATE];
+                byte[] binaryWave = new byte[SAMPLE_RATE * sizeof(short)];
+                int oscillatorsCount = oscillators.Count();
+                foreach (Oscillator oscillator in oscillators)
+                {
+                    int samplesPerWaveLength = (int)(SAMPLE_RATE / frequency);
+                    short ampStep = (short)((short.MaxValue * 2) / samplesPerWaveLength);
+                    short tempSample;
+                    frequency = q;
+                    switch (oscillator.WaveForm)
+                    {
+                        case WaveForm.Sine:
+                            for (int i = 0; i < SAMPLE_RATE; i++)
+                            {
+                                wave[i] += Convert.ToInt16((short.MaxValue * Math.Sin(((Math.PI * 2 * frequency) / SAMPLE_RATE) * i)) / oscillatorsCount);
+                            }
+                            break;
+
+                        case WaveForm.Square:
+                            for (int i = 0; i < SAMPLE_RATE; i++)
+                            {
+                                wave[i] += Convert.ToInt16((short.MaxValue * Math.Sign(Math.Sin((Math.PI * 2 * frequency) / SAMPLE_RATE * i))) / oscillatorsCount);
+                            }
+                            break;
+
+                        case WaveForm.Saw:
+                            for (int i = 0; i < SAMPLE_RATE; i++)
+                            {
+                                tempSample = -short.MaxValue;
+                                for (int j = 0; j < samplesPerWaveLength && i < SAMPLE_RATE; j++)
+                                {
+                                    tempSample += ampStep;
+                                    wave[i++] += Convert.ToInt16(tempSample / oscillatorsCount);
+                                }
+                                i--;
+                            }
+                            break;
+                        case WaveForm.Triangle:
+                            tempSample = -short.MaxValue;
+                            for (int i = 0; i < SAMPLE_RATE; i++)
+                            {
+                                if (Math.Abs(tempSample + ampStep) > short.MaxValue)
+                                {
+                                    ampStep = (short)-ampStep;
+                                }
+                                tempSample += ampStep;
+                                wave[i] += Convert.ToInt16(tempSample / oscillatorsCount);
+                            }
+                            break;
+                    }
+                    PlaySound(wave, binaryWave);
+                    System.Threading.Thread.Sleep(((int)pauseTiming.Value)*100);
+                }
+            }
+        }
     }
 }
