@@ -40,9 +40,9 @@
             this.StopSwipe = new System.Windows.Forms.Button();
             this.pauseTiming = new System.Windows.Forms.NumericUpDown();
             this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox5 = new System.Windows.Forms.TextBox();
             this.oscillator2 = new Waves.Oscillator();
             this.oscillator1 = new Waves.Oscillator();
-            this.textBox5 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.startFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.endFreq)).BeginInit();
@@ -99,7 +99,7 @@
             this.startFreq.Size = new System.Drawing.Size(120, 20);
             this.startFreq.TabIndex = 6;
             this.startFreq.Value = new decimal(new int[] {
-            1,
+            100,
             0,
             0,
             0});
@@ -121,7 +121,7 @@
             this.endFreq.Size = new System.Drawing.Size(120, 20);
             this.endFreq.TabIndex = 7;
             this.endFreq.Value = new decimal(new int[] {
-            1,
+            200,
             0,
             0,
             0});
@@ -143,7 +143,7 @@
             this.stepFreq.Size = new System.Drawing.Size(120, 20);
             this.stepFreq.TabIndex = 8;
             this.stepFreq.Value = new decimal(new int[] {
-            1,
+            10,
             0,
             0,
             0});
@@ -193,6 +193,7 @@
             this.StopSwipe.TabIndex = 13;
             this.StopSwipe.Text = "Stop";
             this.StopSwipe.UseVisualStyleBackColor = true;
+            this.StopSwipe.Click += new System.EventHandler(this.StopSwipe_Click);
             // 
             // pauseTiming
             // 
@@ -225,6 +226,15 @@
             this.textBox4.TabIndex = 15;
             this.textBox4.Text = "Пауза";
             // 
+            // textBox5
+            // 
+            this.textBox5.Location = new System.Drawing.Point(216, 202);
+            this.textBox5.Name = "textBox5";
+            this.textBox5.ReadOnly = true;
+            this.textBox5.Size = new System.Drawing.Size(149, 20);
+            this.textBox5.TabIndex = 16;
+            this.textBox5.Text = "Начальная частота";
+            // 
             // oscillator2
             // 
             this.oscillator2.Location = new System.Drawing.Point(424, 34);
@@ -242,15 +252,6 @@
             this.oscillator1.TabIndex = 0;
             this.oscillator1.TabStop = false;
             this.oscillator1.Text = "oscillator1";
-            // 
-            // textBox5
-            // 
-            this.textBox5.Location = new System.Drawing.Point(216, 202);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(149, 20);
-            this.textBox5.TabIndex = 16;
-            this.textBox5.Text = "Начальная частота";
             // 
             // WaveGenerator
             // 
