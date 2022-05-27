@@ -17,30 +17,30 @@ namespace Waves
             {
                 Name = "Sine",
                 Location = new Point(10, 15),
-                Text = "Sine",
-                BackColor = Color.Yellow
+                Text = "Синусоида",
+                BackColor = Color.Yellow,
             });
             this.Controls.Add(new Button()
             {
                 Name = "Square",
-                Location = new Point(65, 15),
-                Text = "Square"
+                Location = new Point(95, 15),
+                Text = "Прямоугольная"
             });
             this.Controls.Add(new Button()
             {
                 Name = "Triangle",
                 Location = new Point(10, 50),
-                Text = "Triangle"
+                Text = "Треугольная"
             });
             this.Controls.Add(new Button()
             {
                 Name = "Saw",
-                Location = new Point(120, 15),
-                Text = "Saw"
+                Location = new Point(95, 50),
+                Text = "Пилообразная"
             });
             foreach (Control control in this.Controls)
             {
-                control.Size = new Size(50, 30);
+                control.Size = new Size(80, 30);
                 control.Font = new Font("Microsoft Sans Serif", 6.75f);
                 control.Click += WaveButton_Click;
             }
@@ -48,8 +48,8 @@ namespace Waves
             {
                 Name = "OscillatorOn",
                 Location = new Point(210, 10),
-                Size = new Size(40, 30),
-                Text = "On",
+                Size = new Size(70, 70),
+                Text = "Активен",
                 Checked = true
             });
         }
@@ -60,7 +60,7 @@ namespace Waves
         private void WaveButton_Click(object sender, EventArgs e)
         {
             Button button = (Button)sender;
-            this.WaveForm = (WaveForm)Enum.Parse(typeof(WaveForm), button.Text);
+            this.WaveForm = (WaveForm)Enum.Parse(typeof(WaveForm), button.Name);
             foreach (Button otherButtons in this.Controls.OfType<Button>())
             {
                 otherButtons.UseVisualStyleBackColor = true;

@@ -83,11 +83,10 @@ namespace Waves
             }
             catch (OperationCanceledException)
             {
-                MessageBox.Show("Отменено");
+                MessageBox.Show("Остановлено");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Выполнено");
             }
         }
 
@@ -99,6 +98,7 @@ namespace Waves
                 System.Threading.Thread.Sleep(((int)pauseTiming.Value) * 1000);
                 cancelToken.ThrowIfCancellationRequested();
             }
+            MessageBox.Show("Выполнено");
             return;
         }
 
@@ -163,6 +163,16 @@ namespace Waves
                 }
             }
             return wave;
+        }
+
+        private void stepFreq_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
